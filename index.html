@@ -4,29 +4,33 @@
 <head>
     <meta charset="UTF-8">
 
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
 
-
     <title>Meu Primeiro Mundo 3D</title>
 
-<script type="importmap">
-     {
-         "imports": {
-             "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-             "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
-         }
-     }
-</script>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Configuração dos módulos do Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+            }
+        }
+    </script>
 
 </head>
 
 
+
 <body>
- <header id="interface">
+
+    <!-- Interface do jogo -->
+    <header id="interface">
 
         <div class="titulo">
 
@@ -42,7 +46,9 @@
 
     </header>
 
-       <main id="jogo">
+
+    <!-- Área onde o jogo será renderizado -->
+    <main id="jogo">
 
         <div id="mensagem">
             Preparando o mundo 3D...
@@ -50,7 +56,9 @@
 
     </main>
 
-     <footer id="controles">
+
+    <!-- Controles -->
+    <footer id="controles">
 
         <div class="controle">
 
@@ -78,9 +86,10 @@
 
     </footer>
 
+
+    <!-- Código principal do jogo -->
     <script type="module" src="game.js"></script>
 
 </body>
-
 
 </html>

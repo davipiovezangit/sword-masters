@@ -39,6 +39,7 @@ cena.fog = new THREE.Fog(
     100
 );
 
+
 // ==================================================
 // 4. CRIAR A CÂMERA
 // ==================================================
@@ -195,6 +196,7 @@ chao.receiveShadow = true;
 
 cena.add(chao);
 
+
 // ==================================================
 // 8. CRIAR ÁRVORES
 // ==================================================
@@ -308,389 +310,270 @@ for (let i = -40; i <= 40; i += 10) {
 // 9. CRIAR PEDRAS DECORATIVAS
 // ==================================================
 
-
 function criarPedra(x, z) {
-
 
     const geometria = new THREE.DodecahedronGeometry(
 
-
         0.5,
-
 
         0
 
-
     );
-
 
     const material = new THREE.MeshStandardMaterial({
 
-
         color: 0x808080,
-
 
         roughness: 1
 
-
     });
-
 
     const pedra = new THREE.Mesh(
 
-
         geometria,
-
 
         material
 
-
     );
-
 
     pedra.position.set(
 
-
         x,
-
 
         0.3,
 
-
         z
 
-
     );
-
 
     pedra.rotation.set(
 
-
         Math.random(),
 
-
         Math.random(),
-
 
         Math.random()
 
-
     );
-
 
     pedra.castShadow = true;
 
-
     pedra.receiveShadow = true;
-
 
     cena.add(pedra);
 
-
 }
-
 
 
 // Distribuir pedras pelo campo
 
-
 for (let i = 0; i < 25; i++) {
-
 
     const x = Math.random() * 50 - 25;
 
-
     const z = Math.random() * 50 - 25;
-
 
     criarPedra(x, z);
 
-
 }
+
 
 // ==================================================
 // 10. CRIAR O PERSONAGEM
 // ==================================================
 
-
 // Grupo que controla a posição e a direção do personagem
 
-
 const personagem = new THREE.Group();
-
 
 cena.add(personagem);
 
 
-
 // Posição inicial
-
 
 personagem.position.set(0, 0, 0);
 
 
-
 // Variáveis do modelo
 
-
 let modeloCarregado = false;
-
 
 let mixer = null;
 
 
-
 // Carregador de modelos comprimidos com Draco
 
-
 const dracoLoader = new DRACOLoader();
-
 
 dracoLoader.setDecoderPath(
     'https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/libs/draco/'
 );
 
-
 // Carregador de modelos 3D
 
-
 const carregador = new GLTFLoader();
-
 
 carregador.setDRACOLoader(dracoLoader);
 
 
-
 // Importar o arquivo GLB
 
-
 carregador.load(
-
 
     './assets/personagem.glb',
     
 
-
     function (gltf) {
-
 
         const modelo = gltf.scene;
 
 
-
         // Calcular o tamanho original do modelo
-
 
         const caixaInicial = new THREE.Box3()
 
-
             .setFromObject(modelo);
-
 
 
         const tamanhoInicial = new THREE.Vector3();
 
-
         caixaInicial.getSize(tamanhoInicial);
-
 
 
         // Ajustar a escala automaticamente
 
-
         const maiorDimensao = Math.max(
-
 
             tamanhoInicial.x,
 
-
             tamanhoInicial.y,
 
-
             tamanhoInicial.z
-
 
         );
 
 
-
         if (maiorDimensao > 0) {
-
 
             const escala = 1.8 / maiorDimensao;
 
-
             modelo.scale.setScalar(escala);
-
 
         }
 
 
-
         // Centralizar o modelo horizontalmente
-
 
         const centroInicial = new THREE.Box3()
 
-
             .setFromObject(modelo)
-
 
             .getCenter(new THREE.Vector3());
 
 
-
         modelo.position.x -= centroInicial.x;
-
 
         modelo.position.z -= centroInicial.z;
 
 
-
         // Ajustar os pés ao nível do chão
-
 
         const caixaFinal = new THREE.Box3()
 
-
             .setFromObject(modelo);
-
 
 
         modelo.position.y -= caixaFinal.min.y;
 
 
-
         // Configurar sombras
-
 
         modelo.traverse(function (objeto) {
 
-
             if (objeto.isMesh) {
-
 
                 objeto.castShadow = true;
 
-
                 objeto.receiveShadow = true;
 
-
             }
-
 
         });
 
 
-
         // Adicionar o modelo ao personagem
-
 
         personagem.add(modelo);
 
 
-
         // Preparar animações, caso o arquivo possua alguma
-
 
         if (gltf.animations.length > 0) {
 
-
             mixer = new THREE.AnimationMixer(modelo);
-
 
             const animacao = mixer.clipAction(
 
-
                 gltf.animations[0]
-
 
             );
 
-
             animacao.play();
 
-
         }
-
 
 
         modeloCarregado = true;
 
 
-
         mensagem.style.display = 'none';
-
 
         status.textContent = 'Explore o campo!';
 
 
-
         console.log('Personagem carregado com sucesso!');
 
-
     },
-
 
     function (progresso) {
 
-
         if (progresso.total > 0) {
-
 
             const porcentagem = Math.round(
 
-
                 progresso.loaded / progresso.total * 100
-
 
             );
 
-
             mensagem.textContent =
-
 
                 `Carregando personagem: ${porcentagem}%`;
 
-
         }
-
 
     },
 
-
     undefined,
-
 
     function (erro) {
 
-
         console.error(
-
 
             'Erro ao carregar o personagem:',
 
-
             erro
-
 
         );
 
-
         mensagem.textContent =
-
 
             'Não foi possível carregar o personagem. ' +
 
-
             'Verifique o arquivo assets/personagem.glb.';
-
 
         status.textContent = 'Erro ao carregar o modelo';
 
-
     }
-
 
 );
 
@@ -699,90 +582,63 @@ carregador.load(
 // 11. CONTROLES DO TECLADO
 // ==================================================
 
-
 // Registrar as teclas pressionadas
-
 
 const teclas = {};
 
 
-
 // Detectar quando uma tecla é pressionada
-
 
 window.addEventListener('keydown', function (evento) {
 
-
     const tecla = evento.key.toLowerCase();
-
 
 
     if (
 
-
         tecla === 'w' ||
-
 
         tecla === 'a' ||
 
-
         tecla === 's' ||
-
 
         tecla === 'd' ||
 
-
         tecla.startsWith('arrow')
-
 
     ) {
 
-
         evento.preventDefault();
-
 
     }
 
 
-
     teclas[tecla] = true;
 
-
 });
-
 
 
 // Detectar quando uma tecla é solta
 
-
 window.addEventListener('keyup', function (evento) {
-
 
     const tecla = evento.key.toLowerCase();
 
-
     teclas[tecla] = false;
 
-
 });
-
 
 
 // Evitar que as teclas continuem pressionadas
 // se a janela perder o foco
 
-
 window.addEventListener('blur', function () {
-
 
     for (const tecla in teclas) {
 
-
         teclas[tecla] = false;
 
-
     }
-
 
 });
 
@@ -808,7 +664,6 @@ const direcao = new THREE.Vector3();
 // 13. ACOMPANHAR O PERSONAGEM COM A CÂMERA
 // ==================================================
 
-
 const alvoCamera = new THREE.Vector3();
 
 
@@ -816,10 +671,8 @@ const alvoCamera = new THREE.Vector3();
 // 14. RELÓGIO PARA CONTROLAR O TEMPO
 // ==================================================
 
-
 const relogio = new THREE.Clock();
 
-game.js
 
 // ==================================================
 // 15. FUNÇÃO PRINCIPAL DO JOGO
@@ -1071,4 +924,3 @@ window.addEventListener('resize', function () {
     );
 
 });
-
